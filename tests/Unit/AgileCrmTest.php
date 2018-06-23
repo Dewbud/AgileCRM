@@ -1,7 +1,6 @@
 <?php
 
 use Dewbud\AgileCRM\AgileCRM;
-use function GuzzleHttp\json_encode;
 use PHPUnit\Framework\TestCase;
 
 class AgileCrmTest extends TestCase
@@ -61,7 +60,7 @@ class AgileCrmTest extends TestCase
 
         $tags = ['test'];
 
-        $this->assertTrue(false, json_encode($this->client->newContact($array, $tags), JSON_PRETTY_PRINT));
+        // $this->assertTrue(false, json_encode($this->client->newContact($array, $tags), JSON_PRETTY_PRINT));
     }
 
     /** @test */
@@ -79,6 +78,6 @@ class AgileCrmTest extends TestCase
 
         $tags = ['test'];
 
-        $this->assertTrue(false, json_encode($this->client->newTask('test-contact@example.com', $array), JSON_PRETTY_PRINT));
+        // $this->assertTrue(false, json_encode($this->client->newTask('test-contact@example.com', $array), JSON_PRETTY_PRINT));
     }
 }
