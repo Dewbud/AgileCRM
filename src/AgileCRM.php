@@ -52,30 +52,9 @@ class AgileCRM
     }
 
     /**
-     * Test credentials against gateway.
-     *
-     * @return boolean
-     */
-    public function testAuth()
-    {
-        $params = [
-            'merchid' => $this->merchant_id,
-        ];
-
-        try {
-            $res = $this->send('GET', '', $params);
-        } catch (ClientException $e) {
-            return false;
-        }
-
-        preg_match('/<h1>(.*?)<\/h1>/', $res->getBody(), $matches);
-        return strtolower($matches[1]) == strtolower(self::AUTH_TEXT);
-    }
-
-    /**
      * Get all contacts
      *
-     * @return \Dewbud\CardConnect\Responses\Response
+     * @return \Dewbud\AgileCRM\Response
      */
     public function contacts()
     {
@@ -88,7 +67,7 @@ class AgileCRM
      * Create a contact
      * @param array $contact
      * @param array $tags
-     * @return \Dewbud\CardConnect\Responses\Response
+     * @return \Dewbud\AgileCRM\Response
      */
     public function newContact($contact, $tags = [])
     {
@@ -106,7 +85,7 @@ class AgileCRM
      * Create a company
      * @param array $company
      * @param array $tags
-     * @return \Dewbud\CardConnect\Responses\Response
+     * @return \Dewbud\AgileCRM\Response
      */
     public function newCompany($company, $tags = [])
     {
@@ -126,7 +105,7 @@ class AgileCRM
      *
      * @param string $id
      * @param array $data
-     * @return void
+     * @return \Dewbud\AgileCRM\Response
      */
     public function editContact($id, $data)
     {
@@ -139,7 +118,7 @@ class AgileCRM
      * Create a new task for a contact
      * @param string $contact_email
      * @param array $task
-     * @return \Dewbud\CardConnect\Responses\Response
+     * @return \Dewbud\AgileCRM\Response
      */
     public function newTask($contact_email, $task)
     {
@@ -192,8 +171,6 @@ class AgileCRM
             $res = $this->http->request($verb, $resource, $options);
         } catch (ClientException $e) {
             throw $e;
-            // $err = $e->getResponse();
-            // throw new CardConnectException("CardConnect HTTP Client {$err->getStatusCode()}: {$err->getReasonPhrase()}");
         }
 
         return $res;
