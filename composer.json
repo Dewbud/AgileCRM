@@ -1,0 +1,39 @@
+{
+  "name": "dewbud/agilecrm",
+  "description": "PHP adapter for Agile CRM API",
+  "keywords": [
+    "agilecrm"
+  ],
+  "homepage": "https://github.com/Dewbud/AgileCRM",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Dewbud",
+      "email": "jalfonso1134@gmail.com"
+    }
+  ],
+  "scripts": {
+    "test": "phpunit"
+  },
+  "autoload": {
+    "psr-4": {
+      "Dewbud\\AgileCRM\\": "src/"
+    },
+    "files": [
+      "src/TypeMapping.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Dewbud\\AgileCRM\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "php": ">=5.5",
+    "guzzlehttp/guzzle": "^6.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~6.0"
+  }
+}
