@@ -104,12 +104,18 @@ class AgileCRM
      * Edit an existing contact/company
      *
      * @param string $id
-     * @param array $data
+     * @param array $properties
      * @return \Dewbud\AgileCRM\Response
      */
-    public function editContact($id, $data)
+    public function editContact($id, $properties)
     {
-        $res = $this->send('PUT', 'contacts/edit-properties', agilecrm_map_types($data));
+
+        $data = [
+            'id'         => $id,
+            'properties' => agilecrm_map_types($properties),
+        ];
+
+        $res = $this->send('PUT', 'contacts/edit-properties', $data);
 
         return new Response($this->parseResponse($res));
     }
