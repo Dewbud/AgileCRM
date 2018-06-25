@@ -5,7 +5,6 @@ namespace Dewbud\AgileCRM;
 use Dewbud\AgileCRM\Response;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Psr7\Response as GuzzleResponse;
 
 class AgileCRM
 {
@@ -42,7 +41,7 @@ class AgileCRM
      * @param string $user    User email
      * @param string $key     REST API key
      */
-    public function __construct($domain, $user, $key)
+    public function __construct(string $domain, string $user, string $key)
     {
         $this->domain     = $domain;
         $this->user_email = $user;
@@ -58,9 +57,7 @@ class AgileCRM
      */
     public function contacts()
     {
-        $res = $this->send('GET', 'contacts', []);
-
-        return new Response($this->parseResponse($res));
+        return new Response($this->send('GET', 'contacts', []));
     }
 
     /**
@@ -69,16 +66,52 @@ class AgileCRM
      * @param array $tags
      * @return \Dewbud\AgileCRM\Response
      */
-    public function newContact($contact, $tags = [])
+    public function newContact(array $contact, array $tags = [])
     {
         $data = [
             'tags'       => $tags,
             'properties' => agilecrm_map_types($contact),
         ];
 
-        $res = $this->send('POST', 'contacts', $data);
+        return new Response($this->send('POST', 'contacts', $data));
+    }
 
-        return new Response($this->parseResponse($res));
+    /**
+     * Create a deal
+     * @param array $deal
+     * @return \Dewbud\AgileCRM\Response
+     */
+    public function newDeal(array $deal)
+    {
+        return new Response($this->send('POST', 'opportunity', $deal));
+    }
+
+    /**
+     * Update a deal
+     * @param string $id
+     * @param array $deal
+     * @return \Dewbud\AgileCRM\Response
+     */
+    public function editDeal(string $id, array $deal)
+    {
+        $data = array_merge($deal, ['id' => $id]);
+        return new Response($this->send('PUT', 'opportunity/partial-update', $data));
+    }
+
+    /**
+     * Search for a contact by email
+     * @param string $email
+     * @return \Dewbud\AgileCRM\Response|null
+     */
+    public function searchContact(string $email)
+    {
+        $res = $this->send('GET', "contacts/search/email/{$email}");
+
+        if ($res->getStatusCode() == 204) {
+            return null;
+        }
+
+        return new Response($res);
     }
 
     /**
@@ -87,7 +120,7 @@ class AgileCRM
      * @param array $tags
      * @return \Dewbud\AgileCRM\Response
      */
-    public function newCompany($company, $tags = [])
+    public function newCompany(array $company, array $tags = [])
     {
         $data = [
             'type'       => 'COMPANY',
@@ -95,9 +128,7 @@ class AgileCRM
             'properties' => agilecrm_map_types($company),
         ];
 
-        $res = $this->send('POST', 'contacts', $data);
-
-        return new Response($this->parseResponse($res));
+        return new Response($this->send('POST', 'contacts', $data));
     }
 
     /**
@@ -107,7 +138,7 @@ class AgileCRM
      * @param array $properties
      * @return \Dewbud\AgileCRM\Response
      */
-    public function editContact($id, $properties)
+    public function editContact(string $id, array $properties)
     {
 
         $data = [
@@ -115,9 +146,7 @@ class AgileCRM
             'properties' => agilecrm_map_types($properties),
         ];
 
-        $res = $this->send('PUT', 'contacts/edit-properties', $data);
-
-        return new Response($this->parseResponse($res));
+        return new Response($this->send('PUT', 'contacts/edit-properties', $data));
     }
 
     /**
@@ -126,22 +155,9 @@ class AgileCRM
      * @param array $task
      * @return \Dewbud\AgileCRM\Response
      */
-    public function newTask($contact_email, $task)
+    public function newTask(string $contact_email, array $task)
     {
-        $res = $this->send('POST', "tasks/email/{$contact_email}", $task);
-
-        $res = $this->parseResponse($res);
-
-        return new Response($res);
-    }
-
-    /**
-     * @param \GuzzleHttp\Psr7\Response $res
-     * @return array
-     */
-    protected function parseResponse(GuzzleResponse $res)
-    {
-        return \json_decode($res->getBody(), true);
+        return new Response($this->send('POST', "tasks/email/{$contact_email}", $task));
     }
 
     /**
@@ -154,14 +170,15 @@ class AgileCRM
      *
      * @return \GuzzleHttp\Psr7\Response
      */
-    protected function send($verb, $resource, $request = [], $options = [])
+    protected function send(string $verb, string $resource, array $request = [], array $options = [])
     {
         $default_options = [
             'allow_redirects' => true,
             'auth'            => [$this->user_email, $this->api_key],
             'headers'         => [
-                'User-Agent' => self::CLIENT_NAME . ' v' . self::CLIENT_VERSION,
-                'Accept'     => 'application/json',
+                'User-Agent'   => self::CLIENT_NAME . ' v' . self::CLIENT_VERSION,
+                'Accept'       => 'application/json',
+                'Content-Type' => 'application/json',
             ],
             'verify'          => false, // self signed certs
         ];
