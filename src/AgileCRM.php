@@ -150,14 +150,24 @@ class AgileCRM
     }
 
     /**
-     * Create a new task for a contact
+     * Create a new task for a contact by email
      * @param string $contact_email
      * @param array $task
      * @return \Dewbud\AgileCRM\Response
      */
-    public function newTask(string $contact_email, array $task)
+    public function newTaskForContact(string $contact_email, array $task)
     {
         return new Response($this->send('POST', "tasks/email/{$contact_email}", $task));
+    }
+
+    /**
+     * Create a new task
+     * @param array $task
+     * @return \Dewbud\AgileCRM\Response
+     */
+    public function newTask(array $task)
+    {
+        return new Response($this->send('POST', "tasks", $task));
     }
 
     /**
