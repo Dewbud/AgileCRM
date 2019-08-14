@@ -9,6 +9,7 @@ const SYSTEM_TYPES = [
     'company',
     'website',
     'title',
+    'owner_id',
 ];
 
 const HAS_SUBTYPE = [
@@ -33,7 +34,6 @@ function agilecrm_map_types($array)
 {
     $mapped = [];
     foreach ($array as $key => $value) {
-
         if (is_array($value)) {
             $mapped[] = $value;
             continue;
